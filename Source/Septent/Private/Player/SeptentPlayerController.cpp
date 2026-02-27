@@ -22,6 +22,7 @@
 #include "Interaction/HighlightInterface.h"
 #include "Net/RepLayout.h"
 #include "UI/Widget/DamageTextComponent.h"
+#include "InventoryManagement/Components/Inv_InventoryComponent.h"
 
 ASeptentPlayerController::ASeptentPlayerController()
 {
@@ -36,6 +37,12 @@ void ASeptentPlayerController::PlayerTick(float DeltaTime)
 	CursorTrace();
 	AutoRun();
 	UpdateMagicCircleLocation();
+}
+
+void ASeptentPlayerController::ToggleInventory()
+{
+	if (!InventoryComponent.IsValid()) return;
+	InventoryComponent->ToggleInventoryMenu();
 }
 
 void ASeptentPlayerController::ShowMagicCircle(UMaterialInterface* DecalMaterial)
@@ -288,6 +295,8 @@ void ASeptentPlayerController::BeginPlay()
 		Subsystem->AddMappingContext(SeptentInputMappingContext, 0);
 	}
 	
+	InventoryComponent = FindComponentByClass<UInv_InventoryComponent>();
+	
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Default;
 
@@ -307,6 +316,8 @@ void ASeptentPlayerController::SetupInputComponent()
 	SeptentInputComponent->BindAction(ShiftAction, ETriggerEvent::Started, this, &ASeptentPlayerController::ShiftPressed);
 	SeptentInputComponent->BindAction(ShiftAction, ETriggerEvent::Completed, this, &ASeptentPlayerController::ShiftReleased);
 	SeptentInputComponent->BindAbilityActions(InputConfig, this, &ThisClass::AbilityInputTagPressed, &ThisClass::AbilityInputTagReleased, &ThisClass::AbilityInputTagHeld);
+	
+	SeptentInputComponent->BindAction(ToggleInventoryAction, ETriggerEvent::Started, this, &ASeptentPlayerController::ToggleInventory);
 }
 
 void ASeptentPlayerController::Move(const FInputActionValue& InputActionValue) 

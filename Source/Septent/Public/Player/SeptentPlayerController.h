@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerController.h"
 #include "SeptentPlayerController.generated.h"
 
+class UInv_InventoryComponent;
 class IHighlightInterface;
 class AMagicCircle;
 class UNiagaraSystem;
@@ -35,6 +36,9 @@ class SEPTENT_API ASeptentPlayerController : public APlayerController
 public:
 	ASeptentPlayerController();
 	virtual void PlayerTick(float DeltaTime) override;
+	
+	UFUNCTION(BlueprintCallable, Category="Inventory")
+	void ToggleInventory();
 
 	UFUNCTION(Client, Reliable)
 	void ShowDamageNumber(const float DamageAmount, ACharacter* TargetCharacter, const bool bBlockedHit, const bool bCriticalHit);
@@ -58,6 +62,11 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> ShiftAction;
+	
+	UPROPERTY(EditDefaultsOnly, Category="Input|Inventory")
+	TObjectPtr<UInputAction> ToggleInventoryAction;
+	
+	TWeakObjectPtr<UInv_InventoryComponent> InventoryComponent; // Added in BP
 
 	void ShiftPressed() {bShiftPressed = true;};
 	void ShiftReleased() {bShiftPressed = false;};
